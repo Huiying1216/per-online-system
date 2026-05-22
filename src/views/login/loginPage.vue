@@ -4,21 +4,21 @@ import { ref } from 'vue'
 
 const label = ref('user')
 const checked1 = ref(false)
-const form = ref({
+const loginForm = ref({
   username: '',
   password: '',
 })
 
 const toLogin = () => {
-  console.log(form.value)
+  console.log(loginForm.value)
 }
 
 const toRegister = () => {
-  console.log(form.value)
+  console.log(loginForm.value)
 }
 
 const toForgetPassword = () => {
-  console.log(form.value)
+  console.log(loginForm.value)
 }
 </script>
 
@@ -186,6 +186,8 @@ const toForgetPassword = () => {
         width: 100%;
         background-color: #e0600c;
         border-radius: 12px;
+        height: 40px;
+        font-size: 18px;
       }
       .newRegister {
         display: flex;

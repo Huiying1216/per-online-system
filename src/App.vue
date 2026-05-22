@@ -1,10 +1,10 @@
 <script setup>
-import loginPage from '@/views/login/loginPage.vue'
+import registerPage from '@/views/login/resgisterPage.vue'
 </script>
 
 <template>
   <div>
-    <loginPage></loginPage>
+    <registerPage></registerPage>
   </div>
 </template>
 
