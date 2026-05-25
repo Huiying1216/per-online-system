@@ -1,15 +1,37 @@
 <script setup>
 import { User } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
 
 const label = ref('user')
 const checked1 = ref(false)
+const form = ref(null)
 const loginForm = ref({
   username: '',
   password: '',
 })
-
-const toLogin = () => {
+const rules = {
+  username: [
+    { required: true, message: '请输入用户名', trigger: 'blur' },
+    { min: 3, max: 10, message: '用户名长度必须在3到10个字符之间', trigger: 'blur' },
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    {
+      pattern: /^[a-zA-Z0-9_]{6,12}$/,
+      message: '密码必须包含6到12个字母、数字或下划线',
+      trigger: 'blur',
+    },
+  ],
+}
+const toLogin = async () => {
+  await form.value.validate()
+  //调用接口
+  ElMessage.success('登录成功')
+  loginForm.value = {
+    username: '',
+    password: '',
+  }
   console.log(loginForm.value)
 }
 
@@ -32,7 +54,7 @@ const toForgetPassword = () => {
     </el-col>
     <el-col :span="6" :offset="3" class="form">
       <div class="login-content">
-        <el-form>
+        <el-form :model="loginForm" :rules="rules" ref="form">
           <div class="logo-box">
             <el-form-item>
               <iconify-icon class="logo-icon" icon="mdi:paw"></iconify-icon>
@@ -51,16 +73,16 @@ const toForgetPassword = () => {
               </el-radio-group>
             </div>
           </el-form-item>
-          <el-form-item label="账号">
-            <el-input v-model="form.username" class="login-input" placeholder="请输入用户名">
+          <el-form-item label="账号" prop="username">
+            <el-input v-model="loginForm.username" class="login-input" placeholder="请输入用户名">
               <template #suffix>
                 <el-icon><User /></el-icon>
               </template>
             </el-input>
           </el-form-item>
-          <el-form-item label="密码">
+          <el-form-item label="密码" prop="password">
             <el-input
-              v-model="form.password"
+              v-model="loginForm.password"
               type="password"
               placeholder="请输入密码"
               show-password

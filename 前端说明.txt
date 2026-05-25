@@ -1,0 +1,9 @@
+登录界面：
+1.用户登录接口
+  参数：{ username, password, 身份}
+  功能：查询数据库判断用户是否存在，查询密码对比是否正确，返回token
+
+注册界面：
+1.用户注册接口
+  参数：{ username, phone, password, confirmPassword}
+  功能：校验用户名密码
