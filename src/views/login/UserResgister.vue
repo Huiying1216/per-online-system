@@ -1,12 +1,18 @@
 <script setup>
 import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { Back } from '@element-plus/icons-vue'
+const router = useRouter()
 //默认协议勾选状态
 const checkedAgree = ref(false)
 //验证码
 const codeText = ref('获取验证码')
 const realCode = ref('')
 const count = ref(10)
+//协议弹窗
+const checkPetAgree = ref(false)
+const checkPrivateAgree = ref(false)
 //计时器
 let timer = null
 const alterShow = ref(false)
@@ -20,6 +26,9 @@ const registerForm = ref({
   password: '',
   confirmPassword: '',
 })
+const goBack = () => {
+  router.push('/login')
+}
 //校验规则
 /**
  * 非空校验
@@ -119,6 +128,7 @@ const toRegister = async () => {
     alterShow.value = true
   } else {
     ElMessage.success('注册成功')
+    router.push('/login')
     registerForm.value = {
       username: '',
       phone: '',
@@ -183,13 +193,103 @@ const toRegister = async () => {
           <el-form-item>
             <el-checkbox v-model="checkedAgree" />
             &nbsp;我已阅读并同意
-            <el-link type="warning" underline="hover" @click="toRegister"
+            <el-link type="warning" underline="hover" @click="checkPetAgree = true"
               >《萌宠寄养平台用户协议》</el-link
             >和
-            <el-link type="warning" underline="hover" @click="toRegister">《隐私保护政策》</el-link>
+            <el-link type="warning" underline="hover" @click="checkPrivateAgree = true"
+              >《隐私保护政策》</el-link
+            >
           </el-form-item>
+          <el-dialog
+            v-model="checkPetAgree"
+            title="萌宠寄养平台用户协议"
+            width="500"
+            center
+            class="agree-dialog"
+          >
+            <span>
+              <div style="padding: 16px; font-size: 14px">
+                <p style="text-align: left">生效日期：2026年05月26日</p>
+                <p>您注册、登录、使用本平台服务，即表示已阅读、理解并同意本协议全部条款。</p>
+                <p>
+                  <strong>1. 平台服务说明</strong><br />
+                  本平台为宠物寄养信息撮合服务平台，仅提供需求匹配、订单管理、交易支付、纠纷协调服务，不直接提供寄养、护理、医疗服务。
+                </p>
+                <p>
+                  <strong>2. 用户账号</strong><br />
+                  用户需年满18周岁，注册信息必须真实有效。账号仅限本人使用，因保管不当造成损失由用户自行承担。
+                </p>
+                <p>
+                  <strong>3. 用户义务</strong><br />
+                  宠主须如实告知宠物健康、疫苗、性格、病史等信息，不得隐瞒传染病、攻击性等情况。寄养师须保证环境安全卫生，不得虐待、遗弃、转卖宠物。
+                </p>
+                <p>
+                  <strong>4. 订单与退款</strong><br />
+                  服务开始前24小时取消：全额退款；12–24小时取消：退款80%；12小时内取消：退款50%；服务已开始不予退款。寄养师违约可全额退款。
+                </p>
+                <p>
+                  <strong>5. 责任说明</strong><br />
+                  宠物因自身疾病、应激、体质问题导致异常，平台与寄养师不承担责任。因寄养师过失导致宠物受伤、丢失、死亡，由寄养师负责赔偿。
+                </p>
+                <p>
+                  <strong>6. 违规处理</strong><br />
+                  禁止虚假信息、恶意评价、骚扰他人、私下交易，违规平台可封禁账号并终止服务。
+                </p>
+                <p style="text-align: center; margin-top: 30px; color: #999">
+                  萌宠寄养平台 最终解释权所有
+                </p>
+              </div>
+            </span>
+          </el-dialog>
+          <el-dialog
+            v-model="checkPrivateAgree"
+            title="隐私保护政策"
+            width="500"
+            center
+            class="agree-dialog"
+          >
+            <span>
+              <div style="padding: 16px; font-size: 14px">
+                <p style="text-align: left">生效日期：2026年05月26日</p>
+
+                <p>
+                  <strong>1. 信息收集</strong><br />
+                  平台会收集必要信息：手机号、昵称、身份信息、宠物信息、订单记录、交易记录、设备日志等。
+                </p>
+
+                <p>
+                  <strong>2. 信息使用</strong><br />
+                  收集的信息仅用于服务提供、订单管理、身份核验、售后维权、平台安全保障。
+                </p>
+
+                <p>
+                  <strong>3. 信息安全</strong><br />
+                  平台采用加密技术保护用户信息，不会出售、出租用户隐私。仅在法律要求或用户授权时合规共享。
+                </p>
+
+                <p>
+                  <strong>4. 用户权利</strong><br />
+                  用户可查看、修改个人信息，可申请注销账号。对隐私政策有疑问可联系客服。
+                </p>
+
+                <p>
+                  <strong>5. 政策更新</strong><br />
+                  平台可依法更新政策，更新后公示生效，继续使用即视为同意。
+                </p>
+                <p style="text-align: center; margin-top: 30px; color: #999">
+                  萌宠寄养平台 最终解释权所有
+                </p>
+              </div>
+            </span>
+          </el-dialog>
           <el-form-item>
             <el-button class="register-button" @click="toRegister">立即注册</el-button>
+          </el-form-item>
+          <el-form-item>
+            <div class="backLogin" @click="goBack">
+              <el-icon><Back /></el-icon>
+              <span>返回登录</span>
+            </div>
           </el-form-item>
         </el-form>
       </div>
@@ -240,5 +340,15 @@ const toRegister = async () => {
 }
 .alter-message {
   display: none;
+}
+.backLogin {
+  cursor: pointer;
+  color: #e8630c;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+.agree-dialog {
+  background-color: #ea16ae;
 }
 </style>

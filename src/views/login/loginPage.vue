@@ -1,8 +1,10 @@
 <script setup>
+import { useRouter } from 'vue-router'
 import { User } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
+const router = useRouter()
 const label = ref('user')
 const checked1 = ref(false)
 const form = ref(null)
@@ -27,21 +29,43 @@ const rules = {
 const toLogin = async () => {
   await form.value.validate()
   //调用接口
-  ElMessage.success('登录成功')
-  loginForm.value = {
-    username: '',
-    password: '',
+  if (label.value === 'user') {
+    //调用用户登录接口
+    ElMessage.success('登录成功')
+    router.push('/userLayout')
+  } else if (label.value === 'merchant') {
+    //调用商家登录接口
+    ElMessage.success('登录成功')
+    router.push('/merchantLayout')
+  } else if (label.value === 'admin') {
+    //调用管理员登录接口
+    ElMessage.success('登录成功')
+    router.push('/adminLayout')
+  } else {
+    ElMessage.error('登录密码错误')
+    label.value.password = ''
   }
-  console.log(loginForm.value)
 }
 
 const toRegister = () => {
-  console.log(loginForm.value)
+  if (label.value === 'user') {
+    router.push('/UserResgister')
+  } else {
+    router.push('/merchantResgister')
+  }
 }
 
 const toForgetPassword = () => {
   console.log(loginForm.value)
 }
+
+//监测数据变化
+watch(label, () => {
+  loginForm.value = {
+    username: '',
+    password: '',
+  }
+})
 </script>
 
 <template>
