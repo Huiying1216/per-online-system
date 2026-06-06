@@ -1,1 +1,3 @@
-<template>管理员布局</template>
+<template>
+  <div>布局架子</div>
+</template>

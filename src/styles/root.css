@@ -1,0 +1,27 @@
+/* 全局统一重置，彻底解决滚动条、间距问题 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden; /* 禁止横向滚动条 */
+  font-family: 'Microsoft YaHei', sans-serif;
+}
+p {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+/* 让 Element Plus 布局更干净 */
+.el-row {
+  margin: 0 !important;
+}
+:root {
+  --theme-color: #ff6700;
+  --theme-light-color: #fff7e6;
+}

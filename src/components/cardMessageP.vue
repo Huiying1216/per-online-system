@@ -1,0 +1,82 @@
+<script setup>
+import { Promotion } from '@element-plus/icons-vue'
+import { ref } from 'vue'
+
+const petCount = ref(1)
+const newCount = ref(1)
+</script>
+
+<template>
+  <el-card class="message-card" shadow="hover">
+    <div class="top">
+      <div class="icon-wrapper">
+        <el-icon class="icon">
+          <Promotion />
+        </el-icon>
+      </div>
+      <el-tag class="tag" type="success" effect="plain"> +{{ newCount }} 本月 </el-tag>
+    </div>
+    <div class="text-content">
+      <div class="title">在寄养宠物</div>
+      <div class="count">
+        <h3 class="num">{{ petCount }}</h3>
+        <p class="unit">只</p>
+      </div>
+    </div>
+  </el-card>
+</template>
+
+<style lang="less" scoped>
+.message-card {
+  height: 100%;
+  border-radius: 16px;
+  padding: 10px;
+  background-color: #fff;
+  .top {
+    display: flex;
+    flex-direction: row;
+    gap: 100px;
+    .icon-wrapper {
+      width: 50px;
+      height: 50px;
+      background-color: #e6f2ff; /* 浅蓝色背景 */
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .icon {
+        color: #409eff;
+        font-size: 30px;
+      }
+    }
+    .tag {
+      background-color: #e6f9e9;
+      color: #67c23a;
+      border: none;
+    }
+  }
+  .text-content {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+    .title {
+      font-size: 0.87rem;
+      color: #606266;
+    }
+    .count {
+      display: flex;
+      align-items: baseline;
+      .num {
+        font-size: 1.5rem;
+        color: #303133;
+        margin: 0;
+        margin-top: 5px;
+      }
+      .unit {
+        color: #606266;
+        margin: 0 5px;
+      }
+    }
+  }
+}
+</style>

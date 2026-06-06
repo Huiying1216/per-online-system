@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+//import { useUserStore } from '@/stores'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,7 +21,7 @@ const router = createRouter({
       component: () => import('@/views/login/merchantResgister.vue'),
     },
     {
-      path: '/userLayout',
+      path: '/user',
       component: () => import('@/views/layout/userLayout.vue'),
       redirect: '/user/userWork',
       children: [
@@ -29,45 +30,52 @@ const router = createRouter({
         { path: 'userFavorite', component: () => import('@/views/user/userFavorite.vue') },
         { path: 'userMain', component: () => import('@/views/user/userMain.vue') },
         { path: 'userOrder', component: () => import('@/views/user/userOrder.vue') },
+        { path: 'userOrderDetail', component: () => import('@/views/user/userOrderDetail.vue') },
         { path: 'userSearch', component: () => import('@/views/user/userSearch.vue') },
       ],
     },
     {
-      path: '/merchantLayout',
+      path: '/merchant',
       component: () => import('@/views/layout/merchantLayout.vue'),
       redirect: '/merchant/merchantWork',
       children: [
         {
-          path: '/merchant/merchantWork',
+          path: 'merchantWork',
           component: () => import('@/views/merchant/merchantWork.vue'),
         },
         {
-          path: '/merchant/merchanRecord',
+          path: 'merchanRecord',
           component: () => import('@/views/merchant/merchanRecord.vue'),
         },
         {
-          path: '/merchant/merchantFinance',
+          path: 'merchantFinance',
           component: () => import('@/views/merchant/merchantFinance.vue'),
         },
         {
-          path: '/merchant/merchantService',
+          path: 'merchantService',
           component: () => import('@/views/merchant/merchantService.vue'),
         },
         {
-          path: '/merchant/merchantOrder',
+          path: 'merchantOrder',
           component: () => import('@/views/merchant/merchantOrder.vue'),
         },
       ],
     },
     {
-      path: '/adminLayout',
+      path: '/admin',
       component: () => import('@/views/layout/adminLayout.vue'),
       redirect: '/admin/adminWork',
-      children: [
-        { path: '/admin/adminWork', component: () => import('@/views/admin/adminWork.vue') },
-      ],
+      children: [{ path: 'adminWork', component: () => import('@/views/admin/adminWork.vue') }],
     },
   ],
 })
+
+//登录访问拦截
+/**router.beforeEach((to) => {
+  const userStore = useUserStore()
+  if (!userStore.token && to.path !== '/login') {
+    return '/login'
+  }
+})*/
 
 export default router

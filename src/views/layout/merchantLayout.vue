@@ -1,1 +1,3 @@
-<template>商户布局</template>
+<template>
+  <div>布局架子</div>
+</template>
