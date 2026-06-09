@@ -3,6 +3,7 @@ import { Finished } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 
 const petCount = ref(2)
+const newCount = ref(0)
 </script>
 
 <template>
@@ -13,7 +14,12 @@ const petCount = ref(2)
           <Finished />
         </el-icon>
       </div>
-      <div class="tag"></div>
+      <div class="change" v-if="newCount > 0">
+        <el-tag class="tag" type="success" effect="plain"> + {{ newCount }} 今日 </el-tag>
+      </div>
+      <div class="change" v-else>
+        <div class="tag-no"></div>
+      </div>
     </div>
     <div class="text-content">
       <div class="title">已处理订单</div>
@@ -49,7 +55,10 @@ const petCount = ref(2)
       }
     }
     .tag {
-      width: 55px;
+      width: 100%;
+    }
+    .tag-no {
+      width: 66px;
     }
   }
   .text-content {

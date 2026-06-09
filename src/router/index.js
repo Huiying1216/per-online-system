@@ -65,7 +65,11 @@ const router = createRouter({
       path: '/admin',
       component: () => import('@/views/layout/adminLayout.vue'),
       redirect: '/admin/adminWork',
-      children: [{ path: 'adminWork', component: () => import('@/views/admin/adminWork.vue') }],
+      children: [
+        { path: 'adminWork', component: () => import('@/views/admin/adminWork.vue') },
+        { path: 'adminManage', component: () => import('@/views/admin/adminManage.vue') },
+        { path: 'adminReview', component: () => import('@/views/admin/adminReview.vue') },
+      ],
     },
   ],
 })

@@ -1,9 +1,9 @@
 <script setup>
-import { Clock } from '@element-plus/icons-vue'
+import { Promotion } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 
-const petCount = ref(2)
-const newCount = ref(2)
+const petCount = ref(1)
+const newCount = ref(1)
 </script>
 
 <template>
@@ -11,16 +11,21 @@ const newCount = ref(2)
     <div class="top">
       <div class="icon-wrapper">
         <el-icon class="icon">
-          <Clock />
+          <Promotion />
         </el-icon>
       </div>
-      <el-tag class="tag" type="success" effect="plain"> {{ newCount }} 本月 </el-tag>
+      <div class="change" v-if="newCount > 0">
+        <el-tag class="tag" type="success" effect="plain"> + {{ newCount }} 本月 </el-tag>
+      </div>
+      <div class="change" v-else>
+        <div class="tag-no"></div>
+      </div>
     </div>
     <div class="text-content">
-      <div class="title">待处理订单</div>
+      <div class="title">在寄养宠物</div>
       <div class="count">
         <h3 class="num">{{ petCount }}</h3>
-        <p class="unit">单</p>
+        <p class="unit">只</p>
       </div>
     </div>
   </el-card>
@@ -39,20 +44,24 @@ const newCount = ref(2)
     .icon-wrapper {
       width: 50px;
       height: 50px;
-      background-color: #fff7ed;
+      background-color: #e6f2ff; /* 浅蓝色背景 */
       border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
       .icon {
-        color: #e8630c;
+        color: #409eff;
         font-size: 30px;
       }
     }
     .tag {
-      background-color: #fff7ed;
-      color: #f97316;
+      background-color: #e6f9e9;
+      color: #67c23a;
       border: none;
+      width: 100%;
+    }
+    .tag-no {
+      width: 66px;
     }
   }
   .text-content {

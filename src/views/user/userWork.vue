@@ -1,8 +1,8 @@
 <script setup>
-import cardMessageP from '@/components/cardMessageP.vue'
-import cardMessageF from '@/components/cardMessageF.vue'
-import cardMessageT from '@/components/cardMessageT.vue'
-import cardMessageL from '@/components/cardMessageL.vue'
+import cardMessageP from '@/components/message/cardMessageP.vue'
+import cardMessageF from '@/components/message/cardMessageF.vue'
+import cardMessageT from '@/components/message/cardMessageT.vue'
+import cardMessageL from '@/components/message/cardMessageL.vue'
 import petOrderShort from '@/components/petOrderShort.vue'
 import mainMerchant from '@/components/mainMerchant.vue'
 import { useRouter } from 'vue-router'
