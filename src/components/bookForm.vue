@@ -51,7 +51,7 @@ const data = {
 const addBookApplication = () => {
   router.push('/user/userOrder')
   ElMessage({
-    message: '预约成功',
+    message: '成功提交预约',
     type: 'success',
   })
 }

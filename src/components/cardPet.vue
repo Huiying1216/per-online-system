@@ -139,20 +139,20 @@ const petHealthForm = ref([
   <el-space direction="horizontal" size="25" wrap class="out">
     <cardMessageIcon v-for="item in petHealthForm" :key="item.id">
       <template #image>
-        <el-image style="width: 370px; height: 270px" :src="item.image" fit="cover"></el-image>
+        <div class="image-container">
+          <el-image :src="item.image" fit="cover"></el-image>
+          <div class="os-icons">
+            <div class="icon-background" @click="handleEdit(item)">
+              <el-icon><EditPen /></el-icon>
+            </div>
+            <div class="icon-background">
+              <el-icon><Delete /></el-icon>
+            </div>
+          </div>
+        </div>
       </template>
       <template #state>
         <el-tag type="warning" effect="dark">{{ item.state }}</el-tag>
-      </template>
-      <template #os>
-        <div class="os">
-          <div class="icon-background" @click="handleEdit(item)">
-            <el-icon><EditPen /></el-icon>
-          </div>
-          <div class="icon-background">
-            <el-icon><Delete /></el-icon>
-          </div>
-        </div>
       </template>
       <template #info>
         <div class="info">
@@ -299,6 +299,55 @@ const petHealthForm = ref([
   </el-dialog>
 </template>
 <style lang="less" scoped>
+.image-container {
+  position: relative;
+  width: 370px;
+  height: 270px;
+
+  .el-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .os-icons {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+
+    .icon-background {
+      width: 32px;
+      height: 32px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      .el-icon {
+        color: #646668;
+        font-size: 18px;
+
+        &:hover {
+          color: #e96713;
+        }
+      }
+
+      &:hover {
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
 .os {
   position: absolute;
   top: 8px;
@@ -341,7 +390,7 @@ p {
 }
 
 .foot {
-  margin-top: 20px;
+  margin-top: 40px;
   width: 100%;
   text-align: center;
   .el-button {

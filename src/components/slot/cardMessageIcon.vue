@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <el-card class="main">
+  <el-card class="main" style="width: 420px; height: 460px">
     <template #header>
       <div class="pet-show">
         <slot name="image"></slot>
@@ -9,7 +9,6 @@
           <!--<el-tag type="warning" effect="dark">寄养中</el-tag> -->
           <slot name="state"></slot>
         </div>
-        <slot name="os"></slot>
       </div>
     </template>
 

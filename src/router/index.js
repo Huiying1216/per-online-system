@@ -44,12 +44,8 @@ const router = createRouter({
           component: () => import('@/views/merchant/merchantWork.vue'),
         },
         {
-          path: 'merchanRecord',
+          path: 'merchantRecord',
           component: () => import('@/views/merchant/merchanRecord.vue'),
-        },
-        {
-          path: 'merchantFinance',
-          component: () => import('@/views/merchant/merchantFinance.vue'),
         },
         {
           path: 'merchantService',
@@ -58,6 +54,10 @@ const router = createRouter({
         {
           path: 'merchantOrder',
           component: () => import('@/views/merchant/merchantOrder.vue'),
+        },
+        {
+          path: 'merchantMain',
+          component: () => import('@/views/merchant/merchantMain.vue'),
         },
       ],
     },

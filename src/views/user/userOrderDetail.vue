@@ -2,13 +2,64 @@
 import { Edit, Loading, Pointer, Back, Check } from '@element-plus/icons-vue'
 import petImage from '@/assets/png/petShop.png'
 import { useRouter, useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const route = useRoute()
 
 const gotoOrder = () => {
   router.push('/user/userOrder')
+}
+
+// 评价对话框相关
+const reviewDialogVisible = ref(false)
+const reviewForm = ref({
+  score: 0,
+  content: '',
+  tags: [],
+})
+const reviewFormRef = ref(null)
+
+// 评价标签选项
+const reviewTags = ref(['环境整洁', '服务周到', '专业负责', '性价比高', '宠物喜欢', '会再来'])
+
+// 切换标签选中状态
+const toggleTag = (tag) => {
+  const index = reviewForm.value.tags.indexOf(tag)
+  if (index > -1) {
+    reviewForm.value.tags.splice(index, 1)
+  } else {
+    reviewForm.value.tags.push(tag)
+  }
+}
+
+// 提交评价
+const submitReview = () => {
+  if (!reviewForm.value.content.trim()) {
+    ElMessage.warning('请输入评价内容')
+    return
+  }
+
+  console.log('提交评价:', reviewForm.value)
+  ElMessage.success('评价提交成功！')
+  reviewDialogVisible.value = false
+
+  // 重置表单
+  reviewForm.value = {
+    score: 0,
+    content: '',
+    tags: [],
+  }
+}
+
+// 关闭对话框时重置表单
+const closeReviewDialog = () => {
+  reviewForm.value = {
+    score: 0,
+    content: '',
+    tags: [],
+  }
 }
 
 // 订单状态与步骤条 active 的映射关系
@@ -93,6 +144,9 @@ const activeStep = computed(() => {
             </template>
           </el-card>
         </div>
+        <el-button class="review" type="warning" @click="reviewDialogVisible = true"
+          >去评价</el-button
+        >
       </el-col>
       <el-col :span="12">
         <div class="price-detail">
@@ -152,6 +206,54 @@ const activeStep = computed(() => {
       </el-col>
     </el-row>
   </div>
+
+  <!-- 评价对话框 -->
+  <el-dialog
+    v-model="reviewDialogVisible"
+    title="发表评价"
+    width="600px"
+    :before-close="closeReviewDialog"
+  >
+    <el-form :model="reviewForm" ref="reviewFormRef" label-width="80px">
+      <!-- 评分 -->
+      <el-form-item label="总体评分">
+        <el-rate v-model="reviewForm.score" />
+      </el-form-item>
+
+      <!-- 评价标签 -->
+      <el-form-item label="评价标签">
+        <el-space wrap>
+          <el-tag
+            v-for="tag in reviewTags"
+            :key="tag"
+            :type="reviewForm.tags.includes(tag) ? 'warning' : 'info'"
+            effect="plain"
+            style="cursor: pointer"
+            @click="toggleTag(tag)"
+          >
+            {{ tag }}
+          </el-tag>
+        </el-space>
+      </el-form-item>
+
+      <!-- 评价内容 -->
+      <el-form-item label="评价内容">
+        <el-input
+          v-model="reviewForm.content"
+          type="textarea"
+          :rows="4"
+          placeholder="请输入您的评价内容，分享您的真实体验..."
+        />
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <div style="text-align: center">
+        <el-button @click="reviewDialogVisible = false">取消</el-button>
+        <el-button type="warning" @click="submitReview">提交评价</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 <style lang="less" scoped>
 .order-title {
@@ -270,5 +372,10 @@ const activeStep = computed(() => {
 .price-detail,
 .pay-detail {
   margin-bottom: 10px;
+}
+
+.review {
+  width: 50%;
+  margin: 10px 50px;
 }
 </style>

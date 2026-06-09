@@ -77,6 +77,37 @@ const lookMerchantDetail = () => {
   currentMerchant.value = merchant || merchantInfo[0]
   drawer.value = true
 }
+
+// 评论相关数据
+const commentList = ref([
+  {
+    id: 1,
+    userName: '张先生',
+    userAvatar: '',
+    score: 5,
+    content:
+      '非常满意！店家环境很好，工作人员也很专业，把我的狗狗照顾得很好。每天都会发照片和视频，让我很放心。下次还会选择这里！',
+    date: '2024-01-15',
+  },
+  {
+    id: 2,
+    userName: '李女士',
+    userAvatar: '',
+    score: 5,
+    content:
+      '第二次来寄养了，猫咪很喜欢这里的环境。寄养期间还能享受洗浴服务，性价比很高！推荐给大家～',
+
+    date: '2024-01-10',
+  },
+  {
+    id: 3,
+    userName: '王先生',
+    userAvatar: '',
+    score: 4,
+    content: '整体不错，空间挺大的，狗狗玩得很开心。就是价格稍微有点贵，希望能多一些优惠活动。',
+    date: '2024-01-05',
+  },
+])
 </script>
 
 <template>
@@ -143,6 +174,41 @@ const lookMerchantDetail = () => {
       <div class="click-book">
         <el-button type="warning" @click="innerDrawer = true">点击预定</el-button>
       </div>
+
+      <!-- 评论区域 -->
+      <div class="review-section">
+        <div class="review-header">
+          <h3 class="review-title">用户评价</h3>
+          <span class="review-count">({{ commentList.length }}条评价)</span>
+        </div>
+
+        <!-- 评论列表 -->
+        <div class="comment-list">
+          <div v-for="comment in commentList" :key="comment.id" class="comment-item">
+            <div class="comment-user">
+              <el-avatar :size="40" class="user-avatar">
+                {{ comment.userName.charAt(0) }}
+              </el-avatar>
+              <div class="user-info">
+                <div class="user-name">{{ comment.userName }}</div>
+                <div class="comment-date">{{ comment.date }}</div>
+              </div>
+            </div>
+
+            <div class="comment-content">
+              <div class="comment-score">
+                <el-rate
+                  :model-value="comment.score"
+                  disabled
+                  :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
+                />
+              </div>
+              <p class="comment-text">{{ comment.content }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <el-drawer v-model="innerDrawer" title="支付界面" :append-to-body="true">
         <bookForm></bookForm>
       </el-drawer>
@@ -279,6 +345,135 @@ const lookMerchantDetail = () => {
       color: #999;
       font-size: 0.9rem;
       margin-left: 5px;
+    }
+  }
+}
+
+// 评论区域样式
+.review-section {
+  padding: 20px;
+  border-top: 1px solid #eee;
+
+  .review-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .review-title {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .review-count {
+      margin-left: 10px;
+      color: #999;
+      font-size: 0.9rem;
+    }
+  }
+
+  // 发表评论表单
+  .comment-form {
+    background-color: #f5f7fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+
+    .form-title {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 15px;
+    }
+  }
+
+  // 评论列表
+  .comment-list {
+    .comment-item {
+      padding: 20px 0;
+      border-bottom: 1px solid #eee;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .comment-user {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+
+        .user-avatar {
+          background-color: #e8630c;
+          margin-right: 12px;
+        }
+
+        .user-info {
+          .user-name {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+          }
+
+          .comment-date {
+            font-size: 0.8rem;
+            color: #999;
+          }
+        }
+      }
+
+      .comment-content {
+        .comment-score {
+          margin-bottom: 10px;
+        }
+
+        .comment-text {
+          margin: 0 0 12px 0;
+          line-height: 1.6;
+          color: #333;
+          font-size: 0.95rem;
+        }
+
+        .comment-images {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 12px;
+
+          .comment-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.3s;
+
+            &:hover {
+              transform: scale(1.05);
+            }
+          }
+        }
+
+        // 商家回复
+        .merchant-reply {
+          background-color: #f5f7fa;
+          padding: 12px 15px;
+          border-radius: 6px;
+          margin-top: 12px;
+
+          .reply-label {
+            font-size: 0.85rem;
+            color: #e8630c;
+            font-weight: bold;
+            margin-bottom: 6px;
+          }
+
+          .reply-content {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+          }
+        }
+      }
     }
   }
 }
