@@ -9,10 +9,6 @@ export const useUserStore = defineStore(
   () => {
     const token = ref('')
     const setToken = (newToken) => {
-      if (!newToken) {
-        token.value = ''
-        return
-      }
       token.value = newToken
     }
     const removeToken = () => {

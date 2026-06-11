@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useUserStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
-const baseURL = 'http://192.168.43.48:8079/'
+const baseURL = 'http://192.168.43.48:8081/'
 
 const instance = axios.create({
   // TODO 1. 基础地址，超时时间
@@ -15,7 +15,7 @@ instance.interceptors.request.use(
     // TODO 2. 携带token
     const useStore = useUserStore()
     if (useStore.token) {
-      config.headers.Authorization = useStore.token
+      config.headers.Authorization = `Bearer ${useStore.token}`
     }
     return config
   },

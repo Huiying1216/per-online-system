@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-//import { useUserStore } from '@/stores'
+import { useUserStore } from '@/stores'
+import { ElMessage } from 'element-plus'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -74,12 +75,37 @@ const router = createRouter({
   ],
 })
 
-//登录访问拦截
-/**router.beforeEach((to) => {
+// 路由访问拦截
+router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
-  if (!userStore.token && to.path !== '/login') {
-    return '/login'
+
+  // 定义不需要登录的白名单路径
+  const whiteList = ['/login', '/UserResgister', '/merchantResgister']
+
+  // 判断是否在白名单中
+  if (whiteList.includes(to.path)) {
+    // 如果已登录，访问登录页则重定向到首页
+    if (userStore.token && to.path === '/login') {
+      ElMessage.warning('您已登录，无需重复登录')
+      // 根据用户角色重定向到对应首页
+      const roleMap = {
+        user: '/user/userWork',
+        merchant: '/merchant/merchantWork',
+        admin: '/admin/adminWork',
+      }
+      return next(roleMap[userStore.role] || '/user/userWork')
+    }
+    return next()
   }
-})*/
+
+  // 不在白名单中，需要验证登录状态
+  if (!userStore.token) {
+    ElMessage.error('请先登录')
+    return next('/login')
+  }
+
+  // 已登录，可以访问
+  return next()
+})
 
 export default router

@@ -1,5 +1,6 @@
 <script setup>
 import { ElMessage } from 'element-plus'
+import { userRegisterService } from '@/api/user'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Back } from '@element-plus/icons-vue'
@@ -26,37 +27,11 @@ const registerForm = ref({
   password: '',
   confirmPassword: '',
 })
+//返回登录页
 const goBack = () => {
   router.push('/login')
 }
-//校验规则
-/**
- * 非空校验
- * required：必填项
- * message：消息提示
- * trigger：触发验时机
- */
-/**
- * 长度校验
- * min：最小长度
- * max：最大长度
- */
-/**
- * 正则校验
- * pattern：正则表达式
- * message：消息提示
- * trigger：触发验时机
- */
-/**
- * 自定义校验
- * validator：校验函数
- * 参数：rule、value、callback
- *  - value:：校验值
- *  - callback：校验成功回调函数
- *  - callback(new Error('校验失败消息')) ：校验失败回调函数，参数为校验失败消息
- *  - message：消息提示
- * trigger：触发验时机
- */
+//校验
 const rules = {
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -119,16 +94,32 @@ const getCode = () => {
 const getFourRandNum = () => {
   return Math.floor(Math.random() * 9000) + 1000
 }
+
 //注册
 const toRegister = async () => {
-  await form.value.validate()
-  //调用接口
-  clearTimeout(timer)
-  if (!checkedAgree.value) {
-    alterShow.value = true
-  } else {
-    ElMessage.success('注册成功')
-    router.push('/login')
+  try {
+    // 表单校验
+    await form.value.validate()
+    // 判断是否勾选用户协议
+    if (!checkedAgree.value) {
+      alterShow.value = true
+      // 只在这里开启定时关闭弹窗
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        alterShow.value = false
+      }, 2000)
+      return
+    }
+    const submitData = {
+      username: registerForm.value.username,
+      phone: registerForm.value.phone,
+      password: registerForm.value.password,
+    }
+    await userRegisterService(submitData.value)
+
+    // 接口成功后操作
+    ElMessage.success('注册成功，请登录')
+    // 清空表单
     registerForm.value = {
       username: '',
       phone: '',
@@ -136,10 +127,13 @@ const toRegister = async () => {
       password: '',
       confirmPassword: '',
     }
+    // 跳转到登录页
+    router.push('/login')
+  } catch (error) {
+    // 表单校验失败 / 接口返回错误都会走到这里
+    console.log('注册失败：', error)
+    ElMessage.error(error.msg || '注册失败，请检查信息')
   }
-  timer = setTimeout(() => {
-    alterShow.value = false
-  }, 2000)
 }
 </script>
 <template>
