@@ -3,9 +3,10 @@ import { useRouter } from 'vue-router'
 import { User } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { ref, watch } from 'vue'
-// import { useUserStore } from '@/stores'
+import { userLoginService } from '@/api/user'
+import { useUserStore } from '@/stores'
 const router = useRouter()
-// const userStore = useUserStore()
+const userStore = useUserStore()
 const label = ref('user')
 const checked1 = ref(false)
 const form = ref(null)
@@ -29,20 +30,26 @@ const rules = {
 }
 const toLogin = async () => {
   await form.value.validate()
-  //存身份验证
-  // userStore.setToken()
-
   //调用接口
   if (label.value === 'user') {
     //调用用户登录接口
+    const res = await userLoginService(loginForm.value)
+    // 存储登录状态
+    userStore.setToken(res.data.data.token, res.data.data.userId)
+    // 跳转到用户首页
     ElMessage.success('登录成功')
+    console.log(res)
     router.push('/user')
   } else if (label.value === 'merchant') {
     //调用商家登录接口
+    const res = await userLoginService(loginForm.value)
+    userStore.setToken(res.data.token, res.data.userId)
     ElMessage.success('登录成功')
     router.push('/merchant')
   } else if (label.value === 'admin') {
     //调用管理员登录接口
+    const res = await userLoginService(loginForm.value)
+    userStore.setToken(res.data.token, res.data.userId)
     ElMessage.success('登录成功')
     router.push('/admin')
   } else {

@@ -11,18 +11,22 @@ import {
   Avatar,
 } from '@element-plus/icons-vue'
 import image from '@/assets/png/tab.png'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/modules/user'
+
+const userStore = useUserStore()
+onMounted(() => {
+  userStore.getUser()
+})
 
 const router = useRouter()
 
-const username = ref('李慧滢')
-const location = ref('北京')
 const newCount = ref(100)
 
 const loginOut = () => {
   // 清除token
-
+  userStore.removeToken()
   router.push('/login')
 }
 </script>
@@ -62,16 +66,7 @@ const loginOut = () => {
           <el-icon><Star /></el-icon>
           <span>我的收藏</span>
         </el-menu-item>
-        <!-- <el-sub-menu index="/user/userMain">
-          <template #title>
-            <el-icon><User /></el-icon>
-            <span>个人中心</span>
-          </template>
-          <el-menu-item-group>
-            <el-menu-item index="1-1">item one</el-menu-item>
-            <el-menu-item index="1-2">item two</el-menu-item>
-          </el-menu-item-group>
-        </el-sub-menu> -->
+
         <el-menu-item index="/user/userMain">
           <el-icon><User /></el-icon>
           <span>个人中心</span>
@@ -97,9 +92,9 @@ const loginOut = () => {
             </div>
             <div class="custom-message">
               <p class="username">
-                <strong>{{ username }}</strong>
+                <strong>{{ userStore.user.nickname || userStore.user.username }}</strong>
               </p>
-              <span class="location">所在地：{{ location }}</span>
+              <span class="location">所在地：{{ userStore.user.province }}</span>
             </div>
             <el-avatar :icon="UserFilled" />
           </div>

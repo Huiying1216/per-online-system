@@ -6,7 +6,12 @@ import cardMessageL from '@/components/message/cardMessageL.vue'
 import petOrderShort from '@/components/petOrderShort.vue'
 import mainMerchant from '@/components/mainMerchant.vue'
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useUserStore } from '@/stores/modules/user'
+const userStore = useUserStore()
+onMounted(() => {
+  userStore.getUser()
+})
 
 const data = new Date()
 
@@ -46,7 +51,7 @@ const gotoMerchant = () => {
   <div class="main-content">
     <div class="welcome-card">
       <div class="content">
-        <h2>{{ message() }}{{ username }}</h2>
+        <h2>{{ message() }}{{ userStore.user.nickname || userStore.user.username || '用户' }}</h2>
         <p>您的爱宠“{{ petName }}”已经在寄养中心度过了{{ outTime }}天，目前状态良好</p>
         <el-link type="warning">点击查看实时监控</el-link>
       </div>

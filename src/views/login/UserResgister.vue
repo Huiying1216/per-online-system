@@ -115,7 +115,7 @@ const toRegister = async () => {
       phone: registerForm.value.phone,
       password: registerForm.value.password,
     }
-    await userRegisterService(submitData.value)
+    await userRegisterService(submitData)
 
     // 接口成功后操作
     ElMessage.success('注册成功，请登录')

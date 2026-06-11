@@ -1,32 +1,36 @@
 <script setup>
 import petImage from '@/assets/jpg/bird.jpg'
 import { ArrowRight, Setting, ChatRound } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-
+import { useUserStore } from '@/stores'
+import { userUpdateService } from '@/api/user'
+const userStore = useUserStore()
 const isRealName = ref(false)
 const orderMessage = ref(true)
 const promotionMessage = ref(false)
 const petHealthMessage = ref(true)
+const {
+  user: { nickname, phone, email, signature, province, realName, idCard },
+} = useUserStore()
+onMounted(() => {
+  userStore.getUser()
+})
 
 // 对话框控制
 const editDialogVisible = ref(false)
 const passwordDialogVisible = ref(false)
 const realNameDialogVisible = ref(false)
 
-// 头像上传相关
-const uploadDialogVisible = ref(false)
-const tempAvatar = ref(null)
-const uploadInput = ref(null)
-
 // 编辑资料表单
 const editForm = ref({
-  nickname: '用户昵称',
-  gender: '女',
-  phone: '182222222',
-  email: '123@qq.com',
-  signature: '这个人很懒什么都没有留下',
-  image: petImage,
+  nickname,
+  phone,
+  email,
+  signature,
+  province,
+  realName,
+  idCard,
 })
 
 // 修改密码表单
@@ -34,12 +38,6 @@ const passwordForm = ref({
   oldPassword: '',
   newPassword: '',
   confirmPassword: '',
-})
-
-// 实名认证表单
-const realNameForm = ref({
-  realName: '',
-  idCard: '',
 })
 
 // 表单验证规则
@@ -96,14 +94,10 @@ const realNameFormRef = ref(null)
 
 // 处理函数
 const handleEditSubmit = async () => {
-  if (!editFormRef.value) return
-  await editFormRef.value.validate((valid) => {
-    if (valid) {
-      ElMessage.success('更新资料成功')
-      console.log('提交更新资料:', editForm.value)
-      editDialogVisible.value = false
-    }
-  })
+  await editFormRef.value.validate()
+  await userUpdateService(editForm.value)
+  userStore.getUser()
+  ElMessage.success('修改资料成功')
 }
 
 const handlePasswordSubmit = async () => {
@@ -125,11 +119,11 @@ const handleRealNameSubmit = async () => {
   await realNameFormRef.value.validate((valid) => {
     if (valid) {
       ElMessage.success('成功通过实名认证')
-      console.log('提交实名认证:', realNameForm.value)
+
       isRealName.value = true
       realNameDialogVisible.value = false
-      realNameForm.value.realName = ''
-      realNameForm.value.idCard = ''
+      editForm.value.realName = ''
+      editForm.value.idCard = ''
     }
   })
 }
@@ -148,51 +142,6 @@ const resetRealNameForm = () => {
   if (!realNameFormRef.value) return
   realNameFormRef.value.resetFields()
 }
-
-// 头像上传相关函数
-const uploadAvatar = () => {
-  if (uploadInput.value) {
-    uploadInput.value.click()
-  }
-}
-
-const handleFileChange = (event) => {
-  const file = event.target.files[0]
-  if (!file) return
-
-  // 验证文件类型和大小
-  const isImage = file.type.startsWith('image/')
-  const isLt2M = file.size / 1024 / 1024 < 2
-
-  if (!isImage) {
-    alert('只能上传 JPG/PNG 格式的图片!')
-    return
-  }
-  if (!isLt2M) {
-    alert('图片大小不能超过 2MB!')
-    return
-  }
-
-  const reader = new FileReader()
-  reader.readAsDataURL(file)
-  reader.onload = () => {
-    tempAvatar.value = reader.result
-    uploadDialogVisible.value = true
-  }
-  // 清空 input 以便下次可以选择同一文件
-  event.target.value = ''
-}
-
-const confirmAvatar = () => {
-  editForm.value.image = tempAvatar.value
-  uploadDialogVisible.value = false
-  tempAvatar.value = null
-}
-
-const cancelAvatar = () => {
-  uploadDialogVisible.value = false
-  tempAvatar.value = null
-}
 </script>
 
 <template>
@@ -203,11 +152,16 @@ const cancelAvatar = () => {
         <div class="user-left">
           <el-image :src="petImage" fit="fill" class="user-info-image" />
           <div class="user-info-content">
-            <h3 class="nickname">用户昵称</h3>
-            <p class="message">性别：女</p>
-            <p class="message">电话号码：182222222</p>
-            <p class="message">邮箱：123@qq.com</p>
-            <p class="message">个性签名：这个人很懒什么都没有留下</p>
+            <h3 class="nickname">{{ userStore.user.nickname }}</h3>
+            <p class="message">
+              性别：{{
+                userStore.user.gender === 1 ? '男' : userStore.user.gender === 2 ? '女' : '未知'
+              }}
+            </p>
+            <p class="message">地址：{{ userStore.user.province }}</p>
+            <p class="message">电话号码：{{ userStore.user.phone }}</p>
+            <p class="message">邮箱：{{ userStore.user.email }}</p>
+            <p class="message">个性签名：{{ userStore.user.signature }}</p>
           </div>
         </div>
         <div class="user-right">
@@ -309,26 +263,17 @@ const cancelAvatar = () => {
   <!-- 编辑资料对话框 -->
   <el-dialog v-model="editDialogVisible" title="修改个人信息" width="500px" @close="resetEditForm">
     <el-form ref="editFormRef" :model="editForm" :rules="editFormRules" label-width="80px">
-      <el-form-item lable="头像">
-        <el-image :src="editForm.image" fit="fill" class="user-info-image" />
-        <el-button type="warning" @click="uploadAvatar">更换头像</el-button>
-        <!-- 隐藏的文件输入框 -->
-        <input
-          ref="uploadInput"
-          type="file"
-          accept="image/*"
-          style="display: none"
-          @change="handleFileChange"
-        />
-      </el-form-item>
       <el-form-item label="昵称" prop="nickname">
         <el-input v-model="editForm.nickname" placeholder="请输入昵称" />
       </el-form-item>
       <el-form-item label="性别" prop="gender">
         <el-select v-model="editForm.gender" placeholder="请选择性别">
-          <el-option label="男" value="男" />
-          <el-option label="女" value="女" />
+          <el-option label="男" value="1" />
+          <el-option label="女" value="2" />
         </el-select>
+      </el-form-item>
+      <el-form-item label="所在地" prop="province">
+        <el-input v-model="editForm.province" placeholder="请输入所在地" maxlength="11" />
       </el-form-item>
       <el-form-item label="手机号" prop="phone">
         <el-input v-model="editForm.phone" placeholder="请输入手机号" maxlength="11" />
@@ -348,17 +293,6 @@ const cancelAvatar = () => {
     <template #footer>
       <el-button @click="editDialogVisible = false">取消</el-button>
       <el-button type="warning" @click="handleEditSubmit">确定</el-button>
-    </template>
-  </el-dialog>
-
-  <!-- 头像预览确认对话框 -->
-  <el-dialog v-model="uploadDialogVisible" title="确认头像" width="400px">
-    <div class="avatar-preview">
-      <el-avatar :size="150" :src="tempAvatar" />
-    </div>
-    <template #footer>
-      <el-button @click="cancelAvatar">取消</el-button>
-      <el-button type="warning" @click="confirmAvatar">确定</el-button>
     </template>
   </el-dialog>
 
@@ -413,17 +347,12 @@ const cancelAvatar = () => {
     width="500px"
     @close="resetRealNameForm"
   >
-    <el-form
-      ref="realNameFormRef"
-      :model="realNameForm"
-      :rules="realNameFormRules"
-      label-width="100px"
-    >
+    <el-form ref="realNameFormRef" :model="editForm" :rules="realNameFormRules" label-width="100px">
       <el-form-item label="真实姓名" prop="realName">
-        <el-input v-model="realNameForm.realName" placeholder="请输入真实姓名" />
+        <el-input v-model="editForm.realName" placeholder="请输入真实姓名" />
       </el-form-item>
       <el-form-item label="身份证号" prop="idCard">
-        <el-input v-model="realNameForm.idCard" placeholder="请输入身份证号" maxlength="18" />
+        <el-input v-model="editForm.idCard" placeholder="请输入身份证号" maxlength="18" />
       </el-form-item>
       <el-alert title="实名认证说明" type="info" :closable="false" style="margin-top: 10px">
         <p>1. 实名认证后不可修改，请确保信息准确</p>

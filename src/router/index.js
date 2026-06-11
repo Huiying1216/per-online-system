@@ -79,33 +79,28 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
 
-  // 定义不需要登录的白名单路径
+  // 白名单：无需登录就能访问
   const whiteList = ['/login', '/UserResgister', '/merchantResgister']
 
-  // 判断是否在白名单中
+  // 1. 白名单页面
   if (whiteList.includes(to.path)) {
-    // 如果已登录，访问登录页则重定向到首页
+    // 已登录还进登录页，直接跳用户首页
     if (userStore.token && to.path === '/login') {
       ElMessage.warning('您已登录，无需重复登录')
-      // 根据用户角色重定向到对应首页
-      const roleMap = {
-        user: '/user/userWork',
-        merchant: '/merchant/merchantWork',
-        admin: '/admin/adminWork',
-      }
-      return next(roleMap[userStore.role] || '/user/userWork')
+      return next('/user/userWork')
     }
+    // 登录/注册页直接放行
     return next()
   }
 
-  // 不在白名单中，需要验证登录状态
+  // 2. 非白名单页面，校验token
   if (!userStore.token) {
     ElMessage.error('请先登录')
     return next('/login')
   }
 
-  // 已登录，可以访问
-  return next()
+  // 有token直接放行
+  next()
 })
 
 export default router
