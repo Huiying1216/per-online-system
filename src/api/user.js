@@ -17,3 +17,16 @@ export const userGetService = (userId) => {
 
 //更新用户信息
 export const userUpdateService = (data) => request.put('/user/profile', data)
+
+//修改密码
+export const userUpdatePasswordService = (data) => request.put('/user/password', data)
+
+//寄养中宠物数
+export const userOrderLiveService = () => {
+  return request.get('/user/stats/fostering')
+}
+
+//订单待确定数量
+export const userOrderConfirmService = () => {
+  return request.get('/user/stats/confirm')
+}

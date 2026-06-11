@@ -19,7 +19,6 @@ const router = useRouter()
 const hour = data.getHours()
 
 const petName = ref('布丁')
-const outTime = ref(2)
 
 const message = () => {
   if (hour >= 12 && hour < 18) {

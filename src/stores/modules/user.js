@@ -26,6 +26,11 @@ export const useUserStore = defineStore(
       user.value = res.data.data
     }
 
+    // const liveCount = ref(0)
+    // const getLiveCount = async () => {
+    //   const liveCount = await userOrderLiveService()
+    //   liveCount.value = liveCount.data.data
+    // }
     return {
       token,
       userId,
@@ -33,6 +38,8 @@ export const useUserStore = defineStore(
       user,
       setToken,
       removeToken,
+      // liveCount,
+      // getLiveCount,
     }
   },
   {

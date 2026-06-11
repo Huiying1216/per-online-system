@@ -4,9 +4,12 @@ import { ArrowRight, Setting, ChatRound } from '@element-plus/icons-vue'
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores'
-import { userUpdateService } from '@/api/user'
+import { userUpdateService, userUpdatePasswordService } from '@/api/user'
 const userStore = useUserStore()
-const isRealName = ref(false)
+//实名认证
+const cache = localStorage.getItem('isRealName')
+const isRealName = ref(cache ? JSON.parse(cache) : false)
+
 const orderMessage = ref(true)
 const promotionMessage = ref(false)
 const petHealthMessage = ref(true)
@@ -97,35 +100,26 @@ const handleEditSubmit = async () => {
   await editFormRef.value.validate()
   await userUpdateService(editForm.value)
   userStore.getUser()
+  editDialogVisible.value = false
   ElMessage.success('修改资料成功')
 }
 
 const handlePasswordSubmit = async () => {
-  if (!passwordFormRef.value) return
-  await passwordFormRef.value.validate((valid) => {
-    if (valid) {
-      console.log('提交修改密码:', passwordForm)
-      passwordDialogVisible.value = false
-      passwordForm.value.oldPassword = ''
-      passwordForm.value.newPassword = ''
-      passwordForm.value.confirmPassword = ''
-      ElMessage.success('修改密码成功')
-    }
-  })
+  await passwordFormRef.value.validate()
+  const { oldPassword, newPassword } = passwordForm.value
+  await userUpdatePasswordService({ oldPassword, newPassword })
+  passwordDialogVisible.value = false
+  ElMessage.success('修改密码成功')
 }
 
 const handleRealNameSubmit = async () => {
-  if (!realNameFormRef.value) return
-  await realNameFormRef.value.validate((valid) => {
-    if (valid) {
-      ElMessage.success('成功通过实名认证')
-
-      isRealName.value = true
-      realNameDialogVisible.value = false
-      editForm.value.realName = ''
-      editForm.value.idCard = ''
-    }
-  })
+  await realNameFormRef.value.validate()
+  await userUpdateService(editForm.value)
+  userStore.getUser()
+  realNameDialogVisible.value = false
+  ElMessage.success('成功通过实名认证')
+  isRealName.value = true
+  localStorage.setItem('isRealName', JSON.stringify(isRealName.value))
 }
 
 const resetEditForm = () => {

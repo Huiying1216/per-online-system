@@ -1,9 +1,15 @@
 <script setup>
 import { Promotion } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+//import { useUserStore } from '@/stores/modules/user'
+import { userOrderLiveService } from '@/api/user'
 
-const petCount = ref(1)
-const newCount = ref(1)
+const liveCount = ref(10)
+onMounted(async () => {
+  const count = await userOrderLiveService()
+  console.log('完整返回', count)
+  liveCount.value = count.data
+})
 </script>
 
 <template>
@@ -24,7 +30,7 @@ const newCount = ref(1)
     <div class="text-content">
       <div class="title">在寄养宠物</div>
       <div class="count">
-        <h3 class="num">{{ petCount }}</h3>
+        <h3 class="num">{{ liveCount }}</h3>
         <p class="unit">只</p>
       </div>
     </div>
